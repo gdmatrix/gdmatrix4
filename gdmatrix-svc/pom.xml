@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.gdmatrix</groupId>
+    <artifactId>gdmatrix</artifactId>
+    <version>4.0</version>
+  </parent>
+  <artifactId>gdmatrix-svc</artifactId>
+  <packaging>pom</packaging>
+  <repositories>
+    <repository>
+      <id>local-repo</id>
+      <url>file://${basedir}/../../repository</url>
+    </repository>
+  </repositories>
+  <modules>
+    <module>gdmatrix-svc-common</module>
+    <module>gdmatrix-svc-kernel-audifilm</module>
+    <module>gdmatrix-svc-security-santfeliu</module>
+    <module>gdmatrix-svc-doc-santfeliu</module>
+  </modules>
+
+  <description>GDMatrix services</description>
+</project>

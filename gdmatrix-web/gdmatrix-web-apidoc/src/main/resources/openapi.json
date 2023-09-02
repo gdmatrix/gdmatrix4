@@ -1,0 +1,27 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title": "GDMATRIX API",
+    "description": "GDMATRIX HTTP REST API",
+    "contact": {
+      "name": "API Support",
+      "url": "http://gdmatrix.org",
+      "email": "realor@santfeliu.cat"
+    },
+    "license": {
+      "name": "LGPLv3",
+      "url": "https://www.gnu.org/licenses/lgpl.txt"
+    },
+    "version": "1.0"
+  },
+  "servers" : [{ "url" : "/api" }],
+  "paths" : {
+  },
+  "components" :
+  {
+    "securitySchemes" : {
+      "basicAuth" : { "type" : "http", "scheme" : "basic" }
+    }
+  },
+  "security" : [{ "basicAuth" : [] }]
+}

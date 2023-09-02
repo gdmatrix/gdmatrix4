@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module
+  xmlns="http://schema.gdmatrix.org"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://schema.gdmatrix.org module.xsd"
+  name="job"
+  namespace="http://job.matrix.org/"
+  title="Job manager"
+  manager="JobManager"
+  version="1.0"
+  status="FINAL"
+  authors="Abel Blanque">
+
+  <attribute name="jaxws.wsdlLocation" value="/services/job?wsdl" />
+  <attribute name="jaxrs.path" value="/job" />
+
+  <imports>
+    <import prefix="mx"
+      namespace="http://base.matrix.org/"
+      location="matrix.xsd" />
+    <import module="dic"/>
+  </imports>
+
+  <types>
+    <entity name="Job">
+      <identifier name="jobId">
+      </identifier>
+      <property name="name" type="xs:string" minOccurs="0">
+      </property>
+      <property name="description" type="xs:string" minOccurs="0">
+      </property>
+      <property name="startDateTime" type="mx:dateTime" minOccurs="0">
+      </property>
+      <property name="endDateTime" type="mx:dateTime" minOccurs="0">
+      </property>
+      <property name="jobType" type="xs:string" minOccurs="0">
+      </property>
+      <property name="interval" type="xs:int" minOccurs="0">
+      </property>
+      <property name="unitOfTime" type="xs:string" minOccurs="0">
+      </property>
+      <property name="repetitions" type="xs:int" minOccurs="0">
+      </property>
+      <property name="dayOfWeek" type="xs:string" minOccurs="0"
+                maxOccurs="unbounded">
+      </property>
+      <property name="dayOfMonth" type="xs:string" minOccurs="0">
+      </property>
+      <property name="audit" type="xs:boolean" minOccurs="0">
+      </property>
+      <property name="locked" type="xs:boolean" minOccurs="0">
+      </property>
+      <property name="property" type="dic:Property" minOccurs="0"
+        maxOccurs="unbounded" nillable="true">
+      </property>
+    </entity>
+
+    <struct name="JobFilter">
+      <property name="jobId" type="xs:string" minOccurs="0"
+        maxOccurs="unbounded" nillable="true" references="job:Job">
+      </property>
+      <property name="fromDate" type="mx:date" minOccurs="0">
+      </property>
+      <property name="toDate" type="mx:date" minOccurs="0">
+      </property>
+      <property name="jobTypeId" type="xs:string" minOccurs="0" references="dic:Type">
+      </property>
+      <property name="firstResult" type="xs:int">
+      </property>
+      <property name="maxResults" type="xs:int">
+      </property>
+      <property name="property" type="dic:Property" minOccurs="0"
+        maxOccurs="unbounded" nillable="true">
+      </property>
+    </struct>
+
+    <entity name="JobFiring">
+      <identifier name="jobFiringId">
+      </identifier>
+      <property name="jobId" type="xs:string" minOccurs="0">
+      </property>
+      <property name="startDateTime" type="xs:string" minOccurs="0">
+      </property>
+      <property name="endDateTime" type="xs:string" minOccurs="0">
+      </property>
+      <property name="message" type="xs:string" minOccurs="0">
+      </property>
+      <property name="logId" type="xs:string" minOccurs="0">
+      </property>
+      <property name="logTitle" type="xs:string" minOccurs="0">
+      </property>
+      <property name="responseType" type="job:ResponseType">
+      </property>
+      <property name="logType" type="job:LogType">
+      </property>
+    </entity>
+
+    <enumeration name="ResponseType">
+      <value name="SUCCESS"></value>
+      <value name="ERROR"></value>
+    </enumeration>
+
+    <enumeration name="LogType">
+      <value name="MULTIPLE"></value>
+      <value name="CONTINUOUS"></value>
+      <value name="LAST"></value>
+    </enumeration>
+
+  </types>
+
+  <operations>
+
+    <operation name="storeJob">
+      <parameter name="job" type="job:Job">
+      </parameter>
+      <response name="storedJob" type="job:Job">
+      </response>
+    </operation>
+
+    <operation name="loadJob">
+      <parameter name="jobId" type="xs:string">
+      </parameter>
+      <response name="job" type="job:Job">
+      </response>
+    </operation>
+
+    <operation name="removeJob">
+      <parameter name="jobId" type="xs:string">
+      </parameter>
+      <response name="removed" type="xs:boolean">
+      </response>
+    </operation>
+
+    <operation name="findJobs">
+      <parameter name="filter" type="job:JobFilter">
+      </parameter>
+      <response name="jobs" type="job:Job"
+        minOccurs="0" maxOccurs="unbounded" nillable="true">
+      </response>
+    </operation>
+
+    <operation name="scheduleJob">
+      <parameter name="job" type="job:Job">
+      </parameter>
+    </operation>
+
+    <operation name="unscheduleJob">
+      <parameter name="jobId" type="xs:string">
+      </parameter>
+    </operation>
+
+    <operation name="executeJob">
+      <parameter name="job" type="job:Job">
+      </parameter>
+    </operation>
+
+    <operation name="nextFiring">
+      <parameter name="jobId" type="xs:string">
+      </parameter>
+      <response name="nextDate" type="xs:string">
+      </response>
+    </operation>
+
+    <operation name="findJobFirings">
+      <parameter name="jobId" type="xs:string">
+      </parameter>
+      <parameter name="fromDate" type="xs:string">
+      </parameter>
+      <parameter name="toDate" type="xs:string">
+      </parameter>
+      <response name="jobFirings" type="job:JobFiring"
+        minOccurs="0" maxOccurs="unbounded" nillable="true">
+      </response>
+    </operation>
+
+  </operations>
+</module>

@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<xs:schema version="1.0"
+           targetNamespace="http://schema.gdmatrix.org"
+           xmlns="http://schema.gdmatrix.org"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:complexType name="Component">
+  </xs:complexType>
+
+  <xs:complexType name="Import">
+    <xs:complexContent>
+      <xs:extension base="Component">
+        <xs:attribute name="prefix" type="xs:string" use="optional" />
+        <xs:attribute name="module" type="xs:string" use="optional" />
+        <xs:attribute name="namespace" type="xs:string" use="optional" />
+        <xs:attribute name="location" type="xs:string" use="optional" />
+        <xs:attribute name="virtual" type="xs:boolean" use="optional" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Attribute">
+    <xs:complexContent>
+      <xs:extension base="Component">
+        <xs:attribute name="name" type="xs:string"  />
+        <xs:attribute name="value" type="xs:string"  />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Documentation" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Component">
+        <xs:sequence>
+          <xs:any minOccurs="0" maxOccurs="unbounded"
+                  namespace="##any" processContents="skip" />
+        </xs:sequence>
+        <xs:attribute name="language" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="NamedComponent">
+    <xs:complexContent>
+      <xs:extension base="Component">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="attribute" type="Attribute" />
+          <xs:element name="documentation" type="Documentation" />
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string"  />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="TypifiedComponent">
+    <xs:complexContent>
+      <xs:extension base="NamedComponent">
+        <xs:attribute name="type" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ComplexTypifiedComponent">
+    <xs:complexContent>
+      <xs:extension base="TypifiedComponent">
+        <xs:attribute name="minOccurs" type="xs:int"  use="optional"/>
+        <xs:attribute name="maxOccurs" type="xs:string" use="optional"/>
+        <xs:attribute name="references" type="xs:string" use="optional"/>
+        <xs:attribute name="readOnly" type="xs:string" use="optional"/>
+        <xs:attribute name="nillable" type="xs:string" use="optional"/>
+        <xs:attribute name="expectedContentTypes" type="xs:string" use="optional" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Identifier">
+    <xs:complexContent>
+      <xs:extension base="NamedComponent">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Type">
+    <xs:complexContent>
+      <xs:extension base="NamedComponent">
+        <xs:attribute name="extends" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ComplexType">
+    <xs:complexContent>
+      <xs:extension base="Type">
+        <xs:sequence>
+          <xs:element name="identifier" type="Identifier" minOccurs="0" />
+          <xs:element name="property" type="Property" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Property">
+    <xs:complexContent>
+      <xs:extension base="ComplexTypifiedComponent">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Parameter">
+    <xs:complexContent>
+      <xs:extension base="ComplexTypifiedComponent">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Response">
+    <xs:complexContent>
+      <xs:extension base="ComplexTypifiedComponent">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Error">
+    <xs:complexContent>
+      <xs:extension base="NamedComponent">
+        <xs:attribute name="message" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Entity">
+    <xs:complexContent>
+      <xs:extension base="ComplexType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Struct">
+    <xs:complexContent>
+      <xs:extension base="ComplexType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="EnumerationValue">
+    <xs:complexContent>
+      <xs:extension base="NamedComponent">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Enumeration">
+    <xs:complexContent>
+      <xs:extension base="Type">
+        <xs:sequence>
+          <xs:element name="value" type="EnumerationValue" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Operation">
+    <xs:complexContent>
+      <xs:extension base="NamedComponent">
+        <xs:sequence>
+          <xs:element name="parameter" type="Parameter" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element name="response" type="Response" minOccurs="0" />
+          <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Module">
+    <xs:complexContent>
+      <xs:extension base="NamedComponent">
+        <xs:sequence>
+          <xs:element name="imports" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="import" type="Import" minOccurs="0" maxOccurs="unbounded" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="types" minOccurs="0">
+            <xs:complexType>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="entity" type="Entity" />
+                <xs:element name="struct" type="Struct" />
+                <xs:element name="enumeration" type="Enumeration" />
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="operations" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="operation" type="Operation" minOccurs="0" maxOccurs="unbounded" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="namespace" type="xs:anyURI" />
+        <xs:attribute name="title" type="xs:string" />
+        <xs:attribute name="manager" type="xs:string" />
+        <xs:attribute name="version" type="xs:float" />
+        <xs:attribute name="status" type="xs:string" />
+        <xs:attribute name="authors" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="module" type="Module" />
+
+</xs:schema>
