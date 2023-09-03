@@ -1,0 +1,100 @@
+Wildfly 29.0.1 configuration
+
+1.  Download wildfly application server from https://www.wildfly.org/
+
+2.  Uncompress the downloaded zip file to ${WILDFLY_HOME}.
+
+3.  Execute ${WILDFLY_HOME}/bin/add-user.sh to create the wildfly-admin user:
+
+    What type of user do you wish to add?
+    a) Management User (mgmt-users.properties)
+    b) Application User (application-users.properties)
+    (a): a
+
+    Enter the details of the new user to add.
+    Using realm 'ManagementRealm' as discovered from the existing property files.
+    Username : wildfly-admin
+
+    Password recommendations are listed below. To modify these restrictions edit the add-user.properties configuration file.
+    - The password should be different from the username
+    - The password should not be one of the following restricted values {root, admin, administrator}
+    - The password should contain at least 8 characters, 1 alphabetic character(s), 1 digit(s), 1 non-alphanumeric symbol(s)
+    Password : wildfly-admin
+    What groups do you want this user to belong to? (Please enter a comma separated list, or leave blank for none)[  ]:
+
+4.  Enable EclipseLink persistence provider:
+
+    4.1.  Download eclipselink (version 4.0.2) from https://eclipse.dev/eclipselink/downloads/
+
+    4.2.  Extract eclipselink.jar from the downloaded package and copy it to this folder:
+          ${WILDFLY_HOME}/modules/system/layers/base/org/eclipse/persistence/main
+
+    4.3.  Edit ${WILDFLY_HOME}/modules/system/layers/base/org/eclipse/persistence/main/module.xml
+          to include the missing resources and dependencies:
+
+          <resources>
+            <resource-root path="eclipselink.jar"/>
+            ...
+          </resources>
+
+          <dependencies>
+            ...
+            <module name="java.rmi"/>
+            <module name="java.desktop"/>
+            <module name="javax.api"/>
+            ...
+          </dependencies>
+
+5.  Install the database driver (sqlite):
+
+    5.1.  Create this folder: ${WILDFLY_HOME}/modules/org/sqlite/main
+
+    5.2.  Download the sqlite JDBC driver (version 3.42.0.0) from https://github.com/xerial/sqlite-jdbc
+          and copy it to ${WILDFLY_HOME}/modules/org/sqlite/main
+
+    5.3.  Create the module.xml file inside ${WILDFLY_HOME}/modules/org/sqlite/main
+          with this content:
+
+          <?xml version="1.0" ?>
+          <module xmlns="urn:jboss:module:1.1" name="org.sqlite">
+
+            <resources>
+              <resource-root path="sqlite-jdbc-3.42.0.0.jar"/>
+            </resources>
+
+            <dependencies>
+              <module name="java.sql"/>
+            </dependencies>
+          </module>
+
+6.  Register the JDBC driver and the JDBC DataSource.
+
+    Edit ${WILDFLY_HOME}/standalone/configuration/standalone.xml to add these tags:
+
+    <subsystem xmlns="urn:jboss:domain:datasources:7.0">
+      <datasources>
+        ...
+        <datasource jndi-name="java:jboss/datasources/AudifilmDS" pool-name="AudifilmDS">
+          <connection-url>jdbc:sqlite:/${PATH_TO_DATABASE_FILE}</connection-url>
+          <driver>sqlite</driver>
+        </datasource>
+        <drivers>
+          ...
+          <driver name="sqlite" module="org.sqlite">
+            <driver-class>org.sqlite.JDBC</driver-class>
+          </driver>
+        </drivers>
+      </datasources>
+    </subsystem>
+
+7.  Edit ${WILDFLY_HOME}/standalone/configuration/standalone.xml to enable property replacement:
+
+    <subsystem xmlns="urn:jboss:domain:ee:6.0">
+      <spec-descriptor-property-replacement>true</spec-descriptor-property-replacement>
+      ...
+    </subsystem>
+
+8.  Start the application server.
+
+    Execute ${WILDFLY_HOME}/bin/standalone.sh
+
